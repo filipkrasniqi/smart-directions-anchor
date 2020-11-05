@@ -1,0 +1,1 @@
+/usr/bin/c++  -pthread -g   CMakeFiles/ble_scanner.dir/main.cpp.o CMakeFiles/ble_scanner.dir/old_scanner_thread.cpp.o CMakeFiles/ble_scanner.dir/hc_scanner_thread.cpp.o CMakeFiles/ble_scanner.dir/utils/mosquitto/mosquitto_wrapper.cpp.o CMakeFiles/ble_scanner.dir/utils/wifi/WifiInfo.cpp.o CMakeFiles/ble_scanner.dir/utils/process/shell_process.cpp.o  -o ble_scanner  -lmosquitto 
