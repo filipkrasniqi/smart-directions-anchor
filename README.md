@@ -7,4 +7,5 @@ After git cloning, please clean the cmake-build-rasp1 directory (or eventually c
 You need to install hcitools and hcidump. You also need dev libraries related to bluetooth and MQTT to be installed (look at the cmake file. You'll see which dependencies are used).
 
 **Protocol**
+
 MQTT protocol will publish on the broker address on topic ble/rssi a message containing <MAC_ADDRESS_RBERRY_PI>$<SNIFFED_MAC_ADDRESS>$<RSSI> 
