@@ -33,6 +33,8 @@ void MQTTPublisher::init() {
     if(this->mosq == NULL) {
         mosquitto_lib_init();
         this->mosq = mosquitto_new("publisher-test", true, NULL);
+	int result = mosquitto_username_pw_set(this->mosq, "test", "password123");
+	std::cout << "PSW RESULT: " << result << std::endl;
     }
 }
 

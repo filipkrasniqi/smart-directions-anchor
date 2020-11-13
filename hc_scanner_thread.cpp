@@ -11,6 +11,7 @@
 #include <vector>
 #include <mosquitto.h>
 #include <bits/stdc++.h>
+#include <unistd.h>
 
 void HCScannerThread::execute(MQTTPublisher *publisher) {
     this->terminate = false;
@@ -70,7 +71,10 @@ void HCScannerThread::execute(MQTTPublisher *publisher) {
                 rssi = "";
                 currentMAC = "";
             }
+            // usleep(20000);
         }
+        std::cout << "Finished stream!!!" << std::endl;
+        usleep(250000);
     }
     std::cout << "Scanner thread stopped" << std::endl;
 }
