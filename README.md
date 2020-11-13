@@ -8,4 +8,6 @@ You need to install hcitools and hcidump. You also need dev libraries related to
 
 **Protocol**
 
-MQTT protocol will publish on the broker address on topic ble/rssi a message containing <MAC_ADDRESS_RBERRY_PI>$<SNIFFED_MAC_ADDRESS>$<RSSI> 
+MQTT protocol will publish on the broker address on topic ble/rssi a message containing 
+
+<MAC_ADDRESS_RBERRY_PI>$<SNIFFED_MAC_ADDRESS>$<RSSI_VAL> 
