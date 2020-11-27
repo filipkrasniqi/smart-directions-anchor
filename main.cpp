@@ -4,7 +4,7 @@
 #include <thread>
 
 int main() {
-    std::string address = "54.164.129.181";//"192.168.1.151";
+    std::string address = "test.mosquitto.org";
     WifiInfo *wifi = new WifiInfo();
 	
     std::string macAddress = wifi->getMac();

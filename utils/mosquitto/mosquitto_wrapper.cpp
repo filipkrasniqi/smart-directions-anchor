@@ -11,7 +11,7 @@
 /// Address is given, macAddress or any string identifier is needed to identify our message.
 /// Default port is used, i.e., 1883
 MQTTPublisher::MQTTPublisher(std::string address, std::string macAddress) {
-    int port = 1883;
+    int port = 8884;
     this->macAddress = macAddress;
     this->init();
     this->connect(address, port);
@@ -33,8 +33,17 @@ void MQTTPublisher::init() {
     if(this->mosq == NULL) {
         mosquitto_lib_init();
         this->mosq = mosquitto_new("publisher-test", true, NULL);
-	int result = mosquitto_username_pw_set(this->mosq, "test", "password123");
-	std::cout << "PSW RESULT: " << result << std::endl;
+        /* 
+        TODO I was expecting the need to have what follows:
+        int result = mosquitto_tls_set(this->mosq, "/home/pi/keys/mosquitto.org.crt", NULL, "/home/pi/keys/client.crt", "/home/pi/keys/client.key", NULL);
+        but it is not working, so the client.cert is not sent.
+        */
+        int result = mosquitto_tls_set(this->mosq, "/home/pi/keys/mosquitto.org.crt", NULL, NULL, "/home/pi/keys/client.key", NULL);
+        if(result == MOSQ_ERR_SUCCESS) {
+            std::cout << "MQTT CONNECTION: OK" << std::endl;
+        } else if(result == MOSQ_ERR_INVAL) {
+            std::cout << "MQTT CONNECTION: seems wrong" << std::endl;
+        }
     }
 }
 
