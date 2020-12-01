@@ -12,7 +12,7 @@ class MQTTPublisher {
     public:
         explicit MQTTPublisher(std::string, std::string);
         MQTTPublisher(std::string, std::string, int);
-        void init();
+        void init(std::string);
         bool connect(std::string, int);
         void publish(std::string, std::string);
 

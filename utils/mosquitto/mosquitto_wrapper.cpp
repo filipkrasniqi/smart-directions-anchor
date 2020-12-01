@@ -13,7 +13,7 @@
 MQTTPublisher::MQTTPublisher(std::string address, std::string macAddress) {
     int port = 8884;
     this->macAddress = macAddress;
-    this->init();
+    this->init(macAddress);
     this->connect(address, port);
 }
 
@@ -23,16 +23,18 @@ MQTTPublisher::MQTTPublisher(std::string address, std::string macAddress) {
 /// Port is given
 MQTTPublisher::MQTTPublisher(std::string address, std::string macAddress, int port) {
     this->macAddress = macAddress;
-    this->init();
+    this->init(macAddress);
     this->connect(address, port);
 }
 
 /// In case the mosq struct is not initialized, 
 /// it gets initialized
-void MQTTPublisher::init() {
+void MQTTPublisher::init(std::string macAddress) {
     if(this->mosq == NULL) {
         mosquitto_lib_init();
-        this->mosq = mosquitto_new("publisher-test", true, NULL);
+        char clientID[macAddress.length()+1];
+        strcpy(clientID, macAddress.c_str());
+        this->mosq = mosquitto_new(clientID, true, NULL);
         /* 
         TODO I was expecting the need to have what follows:
         int result = mosquitto_tls_set(this->mosq, "/home/pi/keys/mosquitto.org.crt", NULL, "/home/pi/keys/client.crt", "/home/pi/keys/client.key", NULL);
