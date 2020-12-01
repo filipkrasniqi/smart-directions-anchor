@@ -74,7 +74,7 @@ void HCScannerThread::execute(MQTTPublisher *publisher) {
             // usleep(20000);
         }
         std::cout << "Finished stream!!!" << std::endl;
-        usleep(250000);
+        usleep(50000);
     }
     std::cout << "Scanner thread stopped" << std::endl;
 }
