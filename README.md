@@ -23,4 +23,9 @@ Nodes communicate towards brain by using the MQTT protocol. An update on the top
 - **ble/rssi**, with a message containing <MAC_ADDRESS_RBERRY_PI>$<SNIFFED_MAC_ADDRESS>$<RSSI_VAL>.
 
 ## Code
-
+### Execution
+- **main.cpp**: executes two threads, that will be stopped gracefully in case of input. These are **HCScanner** and **MQTTPublisher**, whose job are, respectively, to **detect devices in the proximity** and **periodically communicate the detected devices** to the brain;
+### Scanning of devices
+- **HCScanner**: executes a shell command (```sudo hcitool lescan --duplicates | sudo hcidump```), that scans ble devices and takes useful info for localization. In particular, we use RSSI to infer, with a fixed threshold, whether a device is close. For each detected device, we publish on the aforementioned topic related to RSSI communication to the brain, with a sleep currently set to 50ms.
+### MQTT publisher
+- **[MQTTPublisher](https://github.com/filipkrasniqi/smart-directions-publisher/blob/master/utils/mosquitto/mosquitto_wrapper.cpp)**: C++ library that handles mqtt connection to the broker. Works as a wrapper of the [C mosquitto library](https://mosquitto.org/api/files/mosquitto-h.html). 
