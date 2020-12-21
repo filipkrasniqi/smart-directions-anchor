@@ -2,7 +2,7 @@
 ## Brief summary of the architecture
 The smart directions architecture comprehends **anchors**, **effectors** and a **brain**. In addition to them, we have **devices**, that represent users. The **anchors** allow localization, whereas **effectors** are the components that provide feedback to the users. The **brain** is centralized and its main contribution is the activation of the effectors wrt the position of a device.
 
-This code refers to the **anchors**. It is written in C++ for and it is thought to be ran on a Raspberry with Raspbian OS.
+This code refers to the **anchors**. It is written in C++ and it is thought to be ran on a Raspberry with Raspbian OS.
 
 ## Downloading and building
 
