@@ -18,7 +18,7 @@ You need to install hcitools and hcidump. You also need dev libraries related to
 
 ## Protocol
 
-Nodes communicate towards brain by using the MQTT protocol. An update on the topics will follow this guide, together with the connection to a new custom broker handling permissions. Currently the topics used by the nodes are
+Anchors communicate towards brain by using the MQTT protocol. An update on the topics will follow this guide, together with the connection to a new custom broker handling permissions. Currently the topics used by the anchors are
 
 - **ble/rssi**, with a message containing <MAC_ADDRESS_RBERRY_PI>$<SNIFFED_MAC_ADDRESS>$<RSSI_VAL>.
 
