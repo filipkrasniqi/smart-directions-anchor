@@ -12,9 +12,11 @@ class MQTTPublisher {
     public:
         explicit MQTTPublisher(std::string, std::string);
         MQTTPublisher(std::string, std::string, int);
-        void init(std::string);
+        void init();
         bool connect(std::string, int);
         void publish(std::string, std::string);
+        void publish(std::string, std::string, bool postponeClientID);
+        std::string getClientID();
 
     private:
         struct mosquitto *mosq;

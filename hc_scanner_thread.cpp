@@ -67,11 +67,11 @@ void HCScannerThread::execute(MQTTPublisher *publisher) {
             /// whenever I have both values it means I parsed data for one device. I send them to the broker.
             if(rssi != "" && currentMAC != "") {
                 std::string msg_string = (currentMAC + "$" + rssi);
-                publisher->publish("ble/rssi", msg_string);
+                publisher->publish("directions/anchor/proximity", msg_string);
                 rssi = "";
                 currentMAC = "";
             }
-            // usleep(20000);
+            usleep(200000);
         }
         std::cout << "Finished stream!!!" << std::endl;
         usleep(50000);

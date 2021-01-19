@@ -6,14 +6,17 @@
 #include <bits/stdc++.h>
 #include <assert.h>
 
+#define MQTT_USERNAME "anchor"
+#define MQTT_PSW "anchor"
+
 /// constructor of a MQTT publisher. 
 /// Initializes the mosquitto lib (https://mosquitto.org/api/files/mosquitto-h.html) and connects to a broker.
 /// Address is given, macAddress or any string identifier is needed to identify our message.
 /// Default port is used, i.e., 1883
 MQTTPublisher::MQTTPublisher(std::string address, std::string macAddress) {
-    int port = 8884;
+    int port = 1884;
     this->macAddress = macAddress;
-    this->init(macAddress);
+    this->init();
     this->connect(address, port);
 }
 
@@ -23,29 +26,41 @@ MQTTPublisher::MQTTPublisher(std::string address, std::string macAddress) {
 /// Port is given
 MQTTPublisher::MQTTPublisher(std::string address, std::string macAddress, int port) {
     this->macAddress = macAddress;
-    this->init(macAddress);
+    this->init();
     this->connect(address, port);
+}
+
+std::string MQTTPublisher::getClientID() {
+    return this->macAddress;
 }
 
 /// In case the mosq struct is not initialized, 
 /// it gets initialized
-void MQTTPublisher::init(std::string macAddress) {
+void MQTTPublisher::init() {
     if(this->mosq == NULL) {
         mosquitto_lib_init();
-        char clientID[macAddress.length()+1];
-        strcpy(clientID, macAddress.c_str());
+        char clientID[this->getClientID().length()+1];
+        strcpy(clientID, this->getClientID().c_str());
         this->mosq = mosquitto_new(clientID, true, NULL);
+        int resultAuth = mosquitto_username_pw_set(this->mosq, MQTT_USERNAME, MQTT_PSW);
+        if(resultAuth == MOSQ_ERR_SUCCESS) {
+            std::cout << "MQTT CONNECTION: OK" << std::endl;
+        } else {
+            std::cout << "MQTT CONNECTION: seems wrong" << std::endl;
+        }
         /* 
         TODO I was expecting the need to have what follows:
         int result = mosquitto_tls_set(this->mosq, "/home/pi/keys/mosquitto.org.crt", NULL, "/home/pi/keys/client.crt", "/home/pi/keys/client.key", NULL);
         but it is not working, so the client.cert is not sent.
         */
+        /*
         int result = mosquitto_tls_set(this->mosq, "/home/pi/keys/mosquitto.org.crt", NULL, NULL, "/home/pi/keys/client.key", NULL);
         if(result == MOSQ_ERR_SUCCESS) {
             std::cout << "MQTT CONNECTION: OK" << std::endl;
         } else if(result == MOSQ_ERR_INVAL) {
             std::cout << "MQTT CONNECTION: seems wrong" << std::endl;
         }
+        */
     }
 }
 
@@ -54,16 +69,22 @@ bool MQTTPublisher::connect(std::string address, int port) {
     assert(this->mosq != NULL);
     char message[address.length()+1];
     strcpy(message, address.c_str());
-    int rc = mosquitto_connect(this->mosq, message, 1883, 60);  // rc == 0 means connected
+    int rc = mosquitto_connect(this->mosq, message, port, 60);  // rc == 0 means connected
     return rc == 0;
 }
 
 /// Publishes on a specific target a payload.
-/// It attaches before the mac address by default as it is needed in our protocol.
-/// Messages will always be MAC$PAYLOAD
-/// Currently we assume payload won't include $
+/// The clientID (i.e., MAC) is by default postponed to the target.
 void MQTTPublisher::publish(std::string target, std::string payload) {
-    payload = this->macAddress + "$" + payload;
+    this->publish(target, payload, true);
+}
+
+/// Publishes on a specific target a payload.
+/// The clientID (i.e., MAC) may or may not be postponed to the target.
+void MQTTPublisher::publish(std::string target, std::string payload, bool postponeClientID) {
+    if(postponeClientID) {
+        target += "/"+this->getClientID();
+    }
     char message[payload.length()+1];
     strcpy(message, payload.c_str());
     mosquitto_publish(mosq, NULL, target.c_str(), payload.length(), message, 0, false);
