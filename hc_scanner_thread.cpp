@@ -13,7 +13,7 @@
 #include <bits/stdc++.h>
 #include <unistd.h>
 
-void HCScannerThread::execute(MQTTPublisher *publisher) {
+void HCScannerThread::execute() {
     this->terminate = false;
     while(!this->terminate) {
         /// executing process in s.w.t. I take its stdout
@@ -65,13 +65,23 @@ void HCScannerThread::execute(MQTTPublisher *publisher) {
                 }
             }
             /// whenever I have both values it means I parsed data for one device. I send them to the broker.
-            if(rssi != "" && currentMAC != "") {
+            if(!rssi.empty() && !currentMAC.empty()) {
+                // TODO controllo mac per filtrare solo il mio beacon; poi non sarà necessario
+                /*
+                if(std::string("FA:03:63:CB:09:03").compare(currentMAC) == 0) {
+                    //std::cout << currentMAC.length() << std::endl;
+                    std::string msg_string = (currentMAC + "$" + rssi);
+                    this->publisher->publish("directions/anchor/proximity", msg_string);
+                    rssi = "";
+                    currentMAC = "";
+                }*/
                 std::string msg_string = (currentMAC + "$" + rssi);
-                publisher->publish("directions/anchor/proximity", msg_string);
+                this->publisher->publish("directions/anchor/proximity", msg_string);
                 rssi = "";
                 currentMAC = "";
+            } else {
+                //std::cout << currentMAC << ", " << rssi << std::endl;
             }
-            usleep(200000);
         }
         std::cout << "Finished stream!!!" << std::endl;
         usleep(50000);
@@ -84,5 +94,6 @@ void HCScannerThread::end() {
 }
 
 std::thread HCScannerThread::start(MQTTPublisher *publisher) {
-    return std::thread([=] { this->execute(publisher); });
+    this->publisher = publisher;
+    return std::thread([=] { this->execute(); });
 }

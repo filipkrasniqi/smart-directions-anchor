@@ -9,14 +9,19 @@
 #include <atomic>
 #include <thread>
 #include "utils/mosquitto/mosquitto_wrapper.h"
+#include "utils/scheduler/scheduler.h"
+#include <mosquitto.h>
 
 class HCScannerThread {
     public:
-        void execute(MQTTPublisher *publisher);
+        void execute();
         void end();
         std::thread start(MQTTPublisher *publisher);
     private:
         std::atomic<bool> terminate{ false };
+        Bosma::Scheduler s;
+        MQTTPublisher *publisher;
+        std::vector<std::string> msgsQueue;
 };
 
 
