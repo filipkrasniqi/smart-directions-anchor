@@ -25,7 +25,7 @@ std::string WifiHandler::getMac() {
 		// trying with eth
 		mac = process->execute("cat /sys/class/net/eth0/address");
 		if(mac.length() <= 0) {
-			// fuck them all
+			// none is working, shutting down
 			std::cerr << "No interface available to identify the unit" << std::endl;
 			throw;
 		}
@@ -43,6 +43,9 @@ static std::string trim(std::string s, std::string valToTrim) {
 	return s;
 }
 
+/**
+* Uses iw to scan for nearby APs.
+*/
 std::vector<WifiScan> WifiHandler::getScanResults() {
 	ShellProcess *process = new ShellProcess();
 	std::string scanResults = process->execute("iw dev wlan0 scan");

@@ -8,9 +8,6 @@
 #include <iostream>
 #include <vector>
 
-// TODO mettere qui una struct
-// TODO dopodiche usare questo handler eseguendo il processo
-
 struct WifiScan {
     std::string mac;
     std::string ssid;
