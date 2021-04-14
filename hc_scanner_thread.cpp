@@ -16,7 +16,7 @@
 void HCScannerThread::execute() {
     this->terminate = false;
     while(!this->terminate) {
-        /// executing process in s.w.t. I take its stdout
+        /// executing process in s.w.t. I take its stdout; won't work with ShellProcess class
         const char *cmd = "sudo hcitool lescan --duplicates | sudo hcidump";
         FILE* stream = popen(cmd, "r");
         std::string currentMAC = "";
@@ -66,21 +66,10 @@ void HCScannerThread::execute() {
             }
             /// whenever I have both values it means I parsed data for one device. I send them to the broker.
             if(!rssi.empty() && !currentMAC.empty()) {
-                // TODO controllo mac per filtrare solo il mio beacon; poi non sarà necessario
-                /*
-                if(std::string("FA:03:63:CB:09:03").compare(currentMAC) == 0) {
-                    //std::cout << currentMAC.length() << std::endl;
-                    std::string msg_string = (currentMAC + "$" + rssi);
-                    this->publisher->publish("directions/anchor/proximity", msg_string);
-                    rssi = "";
-                    currentMAC = "";
-                }*/
                 std::string msg_string = (currentMAC + "$" + rssi);
                 this->publisher->publish("directions/anchor/proximity", msg_string);
                 rssi = "";
                 currentMAC = "";
-            } else {
-                //std::cout << currentMAC << ", " << rssi << std::endl;
             }
         }
         std::cout << "Finished stream!!!" << std::endl;

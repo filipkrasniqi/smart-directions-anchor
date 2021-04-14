@@ -6,12 +6,19 @@
 #define BLE_SCANNER_WIFIINFO_H
 
 #include <iostream>
+#include <vector>
 
+struct WifiScan {
+    std::string mac;
+    std::string ssid;
+    int rssi;
+};
 
-class WifiInfo {
+class WifiHandler {
     public:
         std::string getMac();
-        ~WifiInfo();
+        std::vector<WifiScan> getScanResults();
+        ~WifiHandler();
 };
 
 #endif //BLE_SCANNER_WIFIINFO_H

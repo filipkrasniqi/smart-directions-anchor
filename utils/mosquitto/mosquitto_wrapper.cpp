@@ -48,19 +48,6 @@ void MQTTPublisher::init() {
         } else {
             std::cout << "MQTT CONNECTION: seems wrong" << std::endl;
         }
-        /* 
-        TODO I was expecting the need to have what follows:
-        int result = mosquitto_tls_set(this->mosq, "/home/pi/keys/mosquitto.org.crt", NULL, "/home/pi/keys/client.crt", "/home/pi/keys/client.key", NULL);
-        but it is not working, so the client.cert is not sent.
-        */
-        /*
-        int result = mosquitto_tls_set(this->mosq, "/home/pi/keys/mosquitto.org.crt", NULL, NULL, "/home/pi/keys/client.key", NULL);
-        if(result == MOSQ_ERR_SUCCESS) {
-            std::cout << "MQTT CONNECTION: OK" << std::endl;
-        } else if(result == MOSQ_ERR_INVAL) {
-            std::cout << "MQTT CONNECTION: seems wrong" << std::endl;
-        }
-        */
     }
 }
 

@@ -10,7 +10,6 @@
 class ShellProcess {
     public:
         std::string execute(const char*);
-        std::string execCommand(std::string, int&);
         ~ShellProcess();
 };
 
