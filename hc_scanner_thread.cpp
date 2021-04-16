@@ -13,13 +13,16 @@
 #include <bits/stdc++.h>
 #include <unistd.h>
 
+// TODO update
+// TODO rimettere publish
+
 void HCScannerThread::execute() {
     this->terminate = false;
     while(!this->terminate) {
         /// executing process in s.w.t. I take its stdout; won't work with ShellProcess class
-        const char *cmd = "sudo hcitool lescan --duplicates | sudo hcidump";
+        const char *cmd = "btmon";
         FILE* stream = popen(cmd, "r");
-        std::string currentMAC = "";
+        std::string currentUUID = "";
         std::string rssi = "";
         char delim = ' ';
         const int max_buffer = 256;
@@ -29,13 +32,22 @@ void HCScannerThread::execute() {
                 // data.append(buffer);
                 std::string current_line = buffer;
 
-                /// defining whether I am in a useless row, taking MAC or RSSI
-                std::size_t found_bdaddr = current_line.find("bdaddr");
+                /// defining whether I am in a useless row, taking UUID or RSSI
+                std::size_t found_UUID = current_line.find("Data: beac");
                 std::size_t found_rssi = current_line.find("RSSI");
+                /// this instead tells whether previous group was useless
+                std::size_t found_start_group = current_line.find("HCI Event");
 
-                if (found_bdaddr!=std::string::npos || found_rssi!=std::string::npos) {
+                if(found_start_group!=std::string::npos) {
+                    // start from beginning
+                    rssi = "";
+                    currentUUID = "";
+                    //std::cout << "Cleaning"<<std::endl;
+                }
+
+                if (found_UUID!=std::string::npos || found_rssi!=std::string::npos) {
                     /// something good.
-                    /// Text has some spaces at first, then it contains a string s.t. splitted with ' ' gives the value at [1]
+                    /// Text has some spaces at first, then it contains Data: beac<UUID> or RSSI: <val> <junk>
                     std::string sanitizedString = "";
                     int i = 0;
                     bool hasEncounteredChar = false;
@@ -48,28 +60,33 @@ void HCScannerThread::execute() {
                         i++;
                     }
 
-                    std::istringstream currentRowStream(sanitizedString);
-                    std::string currentInstance;
                     i = 0;
-                    /// retrieving splitted string. In both cases we have value = split[1]
-                    while (std::getline(currentRowStream, currentInstance, delim)) {
-                        if(i == 1) {
-                            if(found_bdaddr!=std::string::npos) {
-                                currentMAC = currentInstance;
-                            } else {
-                                rssi = currentInstance.substr(0, currentInstance.length() - 1);
-                            }
+
+                    if(found_UUID!=std::string::npos) {
+                        // it means we are in the correct block
+                        currentUUID = sanitizedString.substr(10, 32);
+                        //std::cout << "Found UUID: "<<currentUUID<<std::endl;
+                    }
+
+                    if(found_rssi != std::string::npos) {
+                        std::size_t pos_dbm = sanitizedString.find(" dBm");
+                        if(pos_dbm == std::string::npos) {
+                            //std::cout << "Something wrong here..." << std::endl;
+                        } else {
+				            rssi = sanitizedString.substr(6, pos_dbm-6);
+                            //std::cout << "Found RSSI: "<<std::stoi(rssi)<<std::endl;
                         }
-                        i++;
+
                     }
                 }
             }
+		
             /// whenever I have both values it means I parsed data for one device. I send them to the broker.
-            if(!rssi.empty() && !currentMAC.empty()) {
-                std::string msg_string = (currentMAC + "$" + rssi);
+            if(!rssi.empty() && !currentUUID.empty()) {
+                std::string msg_string = (currentUUID + "$" + rssi);
                 this->publisher->publish("directions/anchor/proximity", msg_string);
                 rssi = "";
-                currentMAC = "";
+                currentUUID = "";
             }
         }
         std::cout << "Finished stream!!!" << std::endl;
