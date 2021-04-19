@@ -83,7 +83,9 @@ void HCScannerThread::execute() {
 		
             /// whenever I have both values it means I parsed data for one device. I send them to the broker.
             if(!rssi.empty() && !currentUUID.empty()) {
-                std::string msg_string = (currentUUID + "$" + rssi);
+                std::string current_timestamp = std::to_string(std::time(0));
+
+                std::string msg_string = (currentUUID + "$" + rssi + "$" + current_timestamp);
                 this->publisher->publish("directions/anchor/proximity", msg_string);
                 rssi = "";
                 currentUUID = "";
