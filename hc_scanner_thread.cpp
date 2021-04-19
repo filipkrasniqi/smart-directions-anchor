@@ -90,7 +90,7 @@ void HCScannerThread::execute() {
             }
         }
         std::cout << "Finished stream!!!" << std::endl;
-        usleep(50000);
+        usleep(500000);
     }
     std::cout << "Scanner thread stopped" << std::endl;
 }
