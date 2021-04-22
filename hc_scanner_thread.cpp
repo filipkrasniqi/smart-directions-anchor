@@ -87,10 +87,11 @@ void HCScannerThread::execute() {
                 this->publisher->publish("directions/anchor/proximity", msg_string);
                 rssi = "";
                 currentUUID = "";
+                usleep(30000);
             }
         }
         std::cout << "Finished stream!!!" << std::endl;
-        usleep(500000);
+        usleep(400000);
     }
     std::cout << "Scanner thread stopped" << std::endl;
 }
