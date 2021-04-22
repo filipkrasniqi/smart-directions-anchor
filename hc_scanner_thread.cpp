@@ -12,9 +12,7 @@
 #include <mosquitto.h>
 #include <bits/stdc++.h>
 #include <unistd.h>
-
-// TODO update
-// TODO rimettere publish
+#include "utils/process/shell_process.h"
 
 void HCScannerThread::execute() {
     this->terminate = false;
@@ -101,7 +99,13 @@ void HCScannerThread::end() {
     this->terminate = true;
 }
 
+/**
+* Runs lescan and starts the thread running btmon. 
+* Everytime something relevant is found, it is published via MQTT
+*/
 std::thread HCScannerThread::start(MQTTPublisher *publisher) {
     this->publisher = publisher;
+    ShellProcess *process = new ShellProcess();
+	process->startProcess("hcitool lescan");
     return std::thread([=] { this->execute(); });
 }

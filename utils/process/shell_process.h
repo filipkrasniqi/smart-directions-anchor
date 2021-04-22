@@ -6,10 +6,12 @@
 #define BLE_SCANNER_PROCESS_H
 
 #include <iostream>
+#include <sstream>
 
 class ShellProcess {
     public:
         std::string execute(const char*);
+        FILE* startProcess(const char*);
         ~ShellProcess();
 };
 

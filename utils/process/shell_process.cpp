@@ -13,7 +13,7 @@
 Given any shell process, it executes it, returning stout output as a string.
 */
 std::string ShellProcess::execute(const char* cmd) {
-    FILE* stream = popen(cmd, "r");
+    FILE* stream = this->startProcess(cmd);
     std::string result = "";
     const int max_buffer = 256;
     char buffer[max_buffer];
@@ -24,4 +24,11 @@ std::string ShellProcess::execute(const char* cmd) {
         }
     }
     return result;
+}
+
+/**
+* Starts the process and returns the associated stream
+*/
+FILE* ShellProcess::startProcess(const char* cmd) {
+    return popen(cmd, "r");
 }
