@@ -87,7 +87,7 @@ void HCScannerThread::execute() {
                 this->publisher->publish("directions/anchor/proximity", msg_string);
                 rssi = "";
                 currentUUID = "";
-                usleep(500000);                         // between every publish, we sleep
+                usleep(100000);                         // between every publish, we sleep
             }
         }
         std::cout << "Finished stream!!!" << std::endl; // never enters here
