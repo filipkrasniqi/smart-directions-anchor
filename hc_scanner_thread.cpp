@@ -107,6 +107,6 @@ void HCScannerThread::end() {
 std::thread HCScannerThread::start(MQTTPublisher *publisher) {
     this->publisher = publisher;
     ShellProcess *process = new ShellProcess();
-	process->startProcess("hcitool lescan");
+	process->startProcess("hcitool lescan --duplicates");
     return std::thread([=] { this->execute(); });
 }
