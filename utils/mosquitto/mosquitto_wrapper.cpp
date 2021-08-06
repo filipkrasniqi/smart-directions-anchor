@@ -38,7 +38,9 @@ std::string MQTTPublisher::getClientID() {
     if(this->isMacID) {
         return this->macAddress;
     } else {
-        return std::to_string(this->nodeID);
+        std::stringstream b;
+        b << "anchor_" << this->nodeID;
+        return b.str();
     }
 }
 
