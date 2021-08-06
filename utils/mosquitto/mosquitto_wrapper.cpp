@@ -13,9 +13,11 @@
 /// Initializes the mosquitto lib (https://mosquitto.org/api/files/mosquitto-h.html) and connects to a broker.
 /// Address is given, macAddress or any string identifier is needed to identify our message.
 /// Default port is used, i.e., 1883
-MQTTPublisher::MQTTPublisher(std::string address, std::string macAddress) {
-    int port = 1884;
+MQTTPublisher::MQTTPublisher(std::string address, std::string macAddress, int nodeID) {
+    this->nodeID = nodeID;
     this->macAddress = macAddress;
+    int port = 1884;
+    this->isMacID = false;
     this->init();
     this->connect(address, port);
 }
@@ -24,14 +26,20 @@ MQTTPublisher::MQTTPublisher(std::string address, std::string macAddress) {
 /// Initializes the mosquitto lib (https://mosquitto.org/api/files/mosquitto-h.html) and connects to a broker.
 /// Address is given, macAddress or any string identifier is needed to identify our message.
 /// Port is given
-MQTTPublisher::MQTTPublisher(std::string address, std::string macAddress, int port) {
+MQTTPublisher::MQTTPublisher(std::string address, std::string macAddress, int nodeID, int port) {
+    this->nodeID = nodeID;
     this->macAddress = macAddress;
+    this->isMacID = false;
     this->init();
     this->connect(address, port);
 }
 
 std::string MQTTPublisher::getClientID() {
-    return this->macAddress;
+    if(this->isMacID) {
+        return this->macAddress;
+    } else {
+        return std::to_string(this->nodeID);
+    }
 }
 
 /// In case the mosq struct is not initialized, 
@@ -67,7 +75,7 @@ void MQTTPublisher::publish(std::string target, std::string payload) {
 }
 
 /// Publishes on a specific target a payload.
-/// The clientID (i.e., MAC) may or may not be postponed to the target.
+/// The clientID (i.e., MAC or nodeID, depending on isMacID) may or may not be postponed to the target.
 void MQTTPublisher::publish(std::string target, std::string payload, bool postponeClientID) {
     if(postponeClientID) {
         target += "/"+this->getClientID();

@@ -10,8 +10,8 @@
 
 class MQTTPublisher {
     public:
-        explicit MQTTPublisher(std::string, std::string);
-        MQTTPublisher(std::string, std::string, int);
+        explicit MQTTPublisher(std::string, std::string, int);
+        MQTTPublisher(std::string, std::string, int, int);
         void init();
         bool connect(std::string, int);
         void publish(std::string, std::string);
@@ -21,6 +21,8 @@ class MQTTPublisher {
     private:
         struct mosquitto *mosq;
         std::string macAddress;
+        int nodeID;
+        bool isMacID;
 };
 
 
