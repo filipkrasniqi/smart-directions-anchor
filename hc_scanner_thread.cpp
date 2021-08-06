@@ -61,9 +61,10 @@ void HCScannerThread::execute() {
                     i = 0;
 
                     if(found_UUID!=std::string::npos) {
-                        // it means we are in the correct block
+                        // it means we are in the correct block for UUID
                         currentUUID = sanitizedString.substr(10, 32);
-                        //std::cout << "Found UUID: "<<currentUUID<<std::endl;
+                        // as we expect before to find rssi, we reset it to avoid communication of previous RSSIs associated to our beacon
+                        rssi = "";
                     }
 
                     if(found_rssi != std::string::npos) {
@@ -72,7 +73,6 @@ void HCScannerThread::execute() {
                             //std::cout << "Something wrong here..." << std::endl;
                         } else {
 				            rssi = sanitizedString.substr(6, pos_dbm-6);
-                            //std::cout << "Found RSSI: "<<std::stoi(rssi)<<std::endl;
                         }
 
                     }
@@ -84,6 +84,7 @@ void HCScannerThread::execute() {
                 std::string current_timestamp = std::to_string(std::time(0));
 
                 std::string msg_string = (currentUUID + "$" + rssi + "$" + current_timestamp);
+                std::cout << "PUBLISHING " << msg_string << std::endl;
                 this->publisher->publish("directions/anchor/proximity", msg_string);
                 rssi = "";
                 currentUUID = "";
