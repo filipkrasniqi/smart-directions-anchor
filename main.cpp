@@ -25,7 +25,7 @@ int main() {
 
     std::string macAddress = wifi->getMac();
 
-    MQTTPublisher *publisher = new MQTTPublisher(address, macAddress);
+    MQTTPublisher *publisher = new MQTTPublisher(address, macAddress, parser->getNodeID());
     std::cout << "Publisher initialized " << std::endl;
     auto *thread = new HCScannerThread();
     std::thread tw1 = thread->start(publisher);
