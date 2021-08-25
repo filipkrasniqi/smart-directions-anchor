@@ -1,7 +1,8 @@
 #include <iostream>
-#include "hc_scanner_thread.h"
+#include "ble_sniffer_thread.h"
 #include "utils/wifi/WifiHandler.h"
 #include "utils/file/Parser.h"
+#include "utils/scheduler/mqtt_publisher_thread.h"
 #include <thread>
 #include <fstream>
 
@@ -27,12 +28,19 @@ int main() {
 
     MQTTPublisher *publisher = new MQTTPublisher(address, macAddress, parser->getNodeID());
     std::cout << "Publisher initialized " << std::endl;
-    auto *thread = new HCScannerThread();
-    std::thread tw1 = thread->start(publisher);
+    auto *thread = new BLESnifferThread();
+    std::thread tw1 = thread->start();
+    auto *thread2 = new MQTTPublisherThread();
+    std::thread tw2 = thread2->start(publisher);
     int _;
-    std::cout << "Type something to end: " << std::endl;
-    std::cin >> _;
-	thread->end();
-    tw1.join();
+    while(true) {
+        //std::cout << "Type something to end: " << std::endl;
+        //std::cin >> _;
+        usleep(60000000);
+    }
+	//thread->end();
+	//thread2->end();
+    //tw1.join();
+    //tw2.join();
     return 0;
 }
